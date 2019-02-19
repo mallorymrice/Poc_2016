@@ -1,4 +1,4 @@
-# Macroborer presence on corals increases with nutrient input and promotes parrotfish corallivory
+# Different nitrogen sources speed recovery from corallivory and uniquely alter the microbiome of a reef-building coral
 
 ### Authors: Mallory M. Rice, Rebecca L. Maher,  Rebecca Vega Thurber, Deron E. Burkepile
 
