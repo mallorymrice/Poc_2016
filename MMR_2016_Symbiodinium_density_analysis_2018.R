@@ -233,9 +233,9 @@ anova(final.model, type=3, ddf = "Kenward-Roger")
 
 # post-hoc tests
 library(emmeans)
-emmeans(final.model, list(pairwise ~ Temperature), adjust = "tukey") # post-hoc results for Temperature treatment
-emmeans(final.model, list(pairwise ~ Nutrient), adjust = "tukey") # post-hoc results for Nutrient treatment
-emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey") # post-hoc results for Nutrient treatment
+emmeans(final.model, list(pairwise ~ Temperature), adjust = "tukey")
+emmeans(final.model, list(pairwise ~ Nutrient), adjust = "tukey")
+emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey")
 
 ##############################################################################################################################
 ##### MANUSCRIPT PLOT

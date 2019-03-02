@@ -23,7 +23,7 @@ library(lsmeans)
 library(lmerTest)
 
 # standard error function
-se <- function(x) sd(x)/sqrt(length(x))
+se <- function(x) sd(x, na.rm = TRUE)/sqrt(length(x))
 
 # function to visualize the boxplot, histogram, QQ-plot, and kernel density estimate plot for residuals
 normality.plots <- function(x) {
@@ -92,7 +92,7 @@ glimpse(Healing)
 
 # summarizing data to plot
 HealingSummary <- ddply(Healing, .(Nutrient, Temperature, Scarred), summarise,
-                        'mean'=mean(HealingRate),
+                        'mean'=mean(HealingRate, na.rm = TRUE),
                         'se'=se(HealingRate))
 
 dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
@@ -199,7 +199,7 @@ anova(final.model, type=3, ddf = "Kenward-Roger")
 
 # post-hoc tests
 library(emmeans)
-emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey") # post-hoc results for Temperature treatment
+emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey")
 
 ##############################################################################################################################
 ##### MANUSCRIPT PLOT
@@ -208,3 +208,12 @@ emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey") 
 ggsave("healing.png", healing, 
        path = "Output/",
        width = 3, height = 3, units = "in")
+
+##############################################################################################################################
+##### CALCULATING PERCENT CHANGES
+##############################################################################################################################
+
+HealingSummary
+(0.7523264 - 1.6941007) / 0.7523264 # 26 vs. 29 for ambient
+(0.752326 - 1.9079793) / 0.7523264 # 29 control vs. 29 ammonium
+(0.752326 - 1.4873854) / 0.7523264 # 29 control vs. 29 nitrate
