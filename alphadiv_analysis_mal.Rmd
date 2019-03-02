@@ -1,0 +1,241 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+This document contains the statistical tests and results for alpha diversity measures associated with POC_2016.
+By Rebecca Maher
+
+
+```{r}
+library('lme4')
+library('emmeans')
+library('lmerTest')
+library('dplyr')
+```
+## Load the alpha diversity datafile.
+```{r}
+alphadiv <- read.csv(file = "~/data/alphadiv.csv")
+summary(alphadiv)
+```
+
+## Statistical analysis of full data set with growth rate and symbiodinium density.
+### Growth rates
+####First test the effect of growth rates on chao1
+```{r}
+growth_chao1 <- lmer(logrich ~ growth + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(growth_chao1)
+summary(growth_chao1)
+
+growth_chao1.2 <- lm(logrich ~ growth, data = alphadiv)
+anova(growth_chao1.2)
+summary(growth_chao1.2)
+
+# Just checking if I'm using the right response ~ predictor structure
+growth_chao1.3 <- lm(growth ~ logrich, data = alphadiv)
+anova(growth_chao1.3)
+summary(growth_chao1.3)
+```
+These results show that growth rates are not a predictor of richness (log-transformed chao1 index values).
+
+####Next, test the effect of growth rates on Simpson's diversity
+```{r}
+growth_simp <- lmer(asineven ~ growth + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(growth_simp)
+summary(growth_simp)
+
+growth_simp1 <- lm(asineven ~ growth, data = alphadiv)
+anova(growth_chao1)
+summary(growth_chao1)
+```
+These results show that growth rates are not a predictor of simpson's diversity (asin-transformed).
+
+####Lastly, test the effect of growth rates on Faith's phylogenetic diversity
+```{r}
+growth_faith <- lmer(logfaithPD ~ growth + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(growth_faith)
+summary(growth_faith)
+
+growth_faith1 <- lm(logfaithPD ~ growth, data = alphadiv)
+anova(growth_faith1)
+summary(growth_faith1)
+```
+These results show that growth rates are not a predictor of phylogenetic diversity (log-transformed faith PD values).
+
+
+### Symbiodinium densities
+####First test the effect of symbiodinium densities on chao1
+```{r}
+zcount_chao1 <- lmer(logrich ~ zcount + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(zcount_chao1)
+summary(zcount_chao1)
+
+zcount_chao1.2 <- lm(logrich ~ zcount, data = alphadiv)
+anova(zcount_chao1.2)
+summary(zcount_chao1.2)
+
+# Just checking if I'm using the right response ~ predictor structure
+zcount_chao1.3 <- lm(zcount ~ logrich, data = alphadiv)
+anova(zcount_chao1.3)
+summary(zcount_chao1.3)
+```
+These results show that symbiodinium densities are not a predictor of richness (log-transformed chao1 index values).
+
+####Next, test the effect of symbiodinium densities on Simpson's diversity
+```{r}
+zcount_simp <- lmer(asineven ~ zcount + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(zcount_simp)
+summary(zcount_simp)
+
+zcount_simp1 <- lm(asineven ~ zcount, data = alphadiv)
+anova(zcount_chao1)
+summary(zcount_chao1)
+```
+These results show that symbiodinium densities are not a predictor of simpson's diversity (asin-transformed).
+
+####Lastly, test the effect of symbiodinium densities on Faith's phylogenetic diversity
+```{r}
+zcount_faith <- lmer(logfaithPD ~ zcount + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(zcount_faith)
+summary(zcount_faith)
+
+zcount_faith1 <- lm(logfaithPD ~ zcount, data = alphadiv)
+anova(zcount_faith1)
+summary(zcount_faith1)
+```
+These results show that symbiodinium densities are not a predictor of phylogenetic diversity (log-transformed faith PD values).
+
+
+### Healing rates
+####Subset data to only include samples with a healing rate (scarred samples)
+```{r}
+alphadiv <- na.omit(alphadiv)
+summary(alphadiv)
+```
+####First test the effect of healing rates on chao1
+```{r}
+healing_chao1 <- lmer(logrich ~ healing + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_chao1)
+summary(healing_chao1)
+
+healing_chao1.2 <- lm(logrich ~ healing, data = alphadiv)
+anova(healing_chao1.2)
+summary(healing_chao1.2)
+
+# Just checking if I'm using the right response ~ predictor structure
+healing_chao1.3 <- lm(healing ~ logrich, data = alphadiv)
+anova(healing_chao1.3)
+summary(healing_chao1.3)
+```
+These results show that healing rates are not a predictor of richness (log-transformed chao1 index values).
+
+####Next, test the effect of healing rates on Simpson's diversity
+```{r}
+healing_simp <- lmer(asineven ~ healing + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_simp)
+summary(healing_simp)
+
+healing_simp1 <- lm(asineven ~ healing, data = alphadiv)
+anova(healing_chao1)
+summary(healing_chao1)
+```
+These results show that healing rates are not a predictor of simpson's diversity (asin-transformed).
+
+####Lastly, test the effect of healing rates on Faith's phylogenetic diversity
+```{r}
+healing_faith <- lmer(logfaithPD ~ healing + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_faith)
+summary(healing_faith)
+
+healing_faith1 <- lm(logfaithPD ~ healing, data = alphadiv)
+anova(healing_faith1)
+summary(healing_faith1)
+```
+These results show that healing rates are not a predictor of phylogenetic diversity (log-transformed faith PD values).
+
+#### Now I'm going to look at treatment effects on alpha diversity of healing rate data.
+Still using the subsetted alphadiv dataframe to only include samples with a healing rate.
+```{r}
+# Chao1
+healing_trt_c <- lmer(logrich ~ temp*nutrient + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_trt_c)
+summary(healing_trt_c)
+
+healing_trt_c1 <- lm(logrich ~ temp*nutrient, data = alphadiv)
+anova(healing_trt_c1)
+summary(healing_trt_c1)
+
+# Simpson's diversity
+healing_trt_s <- lmer(asineven ~ temp*nutrient + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_trt_s)
+summary(healing_trt_s)
+
+healing_trt_s1 <- lm(asineven ~ temp*nutrient, data = alphadiv)
+anova(healing_trt_s1)
+summary(healing_trt_s1)
+
+# Faith's phylogenetic diversity
+healing_trt_f <- lmer(faithPD ~ temp*nutrient + (1|tank) + (1|colony), data = alphadiv, REML = T)
+anova(healing_trt_f)
+summary(healing_trt_f)
+
+healing_trt_f1 <- lm(faithPD ~ temp*nutrient, data = alphadiv)
+anova(healing_trt_f1)
+summary(healing_trt_f1)
+```
+Nothing was significant here.
+
+Now trying with pairwise t.tests
+```{r}
+pairwise.t.test(alphadiv$logrich, alphadiv$nutrient, p.adjust.method = "fdr")
+pairwise.t.test(alphadiv$asineven, alphadiv$nutrient, p.adjust.method = "fdr")
+pairwise.t.test(alphadiv$logfaithPD, alphadiv$nutrient, p.adjust.method = "fdr")
+
+pairwise.t.test(alphadiv$logrich, alphadiv$temp, p.adjust.method = "fdr")
+pairwise.t.test(alphadiv$asineven, alphadiv$temp, p.adjust.method = "fdr")
+pairwise.t.test(alphadiv$logfaithPD, alphadiv$temp, p.adjust.method = "fdr")
+```
+Also no other significant results.
+
+#### Now going to calculate summary statistics for samples with a healing rate
+```{r}
+sderr <- function(x) {sd(x)/sqrt(length(x))}
+
+alphadiv_grp <- group_by(alphadiv, nutrient)
+
+mean_stderr_grp_c <- function(subdf) {
+  meanm <- mean(subdf$richness)
+  stderr <- sderr(subdf$richness)
+  ret_df <- data.frame(mean = meanm, se = stderr)
+  return(ret_df)
+}
+
+chao_stats <- do(alphadiv_grp, mean_stderr_grp_c(.))
+
+mean_stderr_grp_s <- function(subdf) {
+  meanm <- mean(subdf$evenness)
+  stderr <- sderr(subdf$evenness)
+  ret_df <- data.frame(mean = meanm, se = stderr)
+  return(ret_df)
+}
+
+simp_stats <- do(alphadiv_grp, mean_stderr_grp_s(.))
+
+mean_stderr_grp_f <- function(subdf) {
+  meanm <- mean(subdf$faithPD)
+  stderr <- sderr(subdf$faithPD)
+  ret_df <- data.frame(mean = meanm, se = stderr)
+  return(ret_df)
+}
+
+faith_stats <- do(alphadiv_grp, mean_stderr_grp_f(.))
+chao_stats
+simp_stats
+faith_stats
+
+```
+
+
+
