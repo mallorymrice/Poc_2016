@@ -1,0 +1,6 @@
+ID,Unique coral ID
+Initial_weight_g,Initial dry weight of coral (g)
+Final_weight_g,Final dry weight of coral (g)
+Diff_weight_g,Difference between the final and initial coral weight (g)
+Diff_weight_mg,Difference between the final and initial coral weight (mg)
+Notes,Notes of interest

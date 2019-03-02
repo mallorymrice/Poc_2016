@@ -1,0 +1,7 @@
+ID,Unique coral ID
+Tank,Number of the tank coral replicate was in during the experiment
+Nutrient,"Nutrient treatment assigned to coral for experiment (control, ammonium, or nitrate)"
+Temperature,Temperature treatment assigned to coral for experiment (26C or 29C)
+Scarred,Simulated corallivory treatment assigned to coral for experiment (intact or wounded)
+Treatment,Treatment assigned to coral during experiment
+Colony,Source colony coral was fragmented from

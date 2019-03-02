@@ -46,7 +46,8 @@ var.plots <- function(x) {
   title("Absolute Residuals vs. Fitted")
 }
 
-completeFun <- function(data, desiredCols) { # remove NA values from specific column
+# completeFun removes NA values in a specific column
+completeFun <- function(data, desiredCols) {
   completeVec <- complete.cases(data[, desiredCols])
   return(data[completeVec, ])
 }
@@ -56,21 +57,22 @@ completeFun <- function(data, desiredCols) { # remove NA values from specific co
 ##############################################################################################################################
 
 # opening Weight csv file
-Weight <- read.csv("MMR_2016_Weight.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
+Weight <- read.csv("Data/MMR_2016_Weight.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
+
 # opening Surface Area csv file
-SurfaceArea <- read.csv("MMR_2016_Surface_area.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
+SurfaceArea <- read.csv("Data/MMR_2016_Surface_area.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
+
+# opening Replicate Treatment csv file
+Reps <- read.csv("Data/MMR_2016_Replicate_treatment_assignments.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
 
 ##############################################################################################################################
-##### RESTRUCTURING DF
+##### RESTRUCTURING  AND MERGING DF'S
 ##############################################################################################################################
 
 glimpse(Weight)
 
-# converting Temperature to factor
-Weight$Temperature <- as.factor(Weight$Temperature)
-
-# converting Tank to factor
-Weight$Tank <- as.factor(Weight$Tank)
+# converting ID to factor
+Weight$ID <- as.factor(Weight$ID)
 
 # converting Diff_weight_g to numeric
 Weight$Diff_weight_g <- as.numeric((as.character(Weight$Diff_weight_g)))
@@ -78,13 +80,24 @@ Weight$Diff_weight_g <- as.numeric((as.character(Weight$Diff_weight_g)))
 # converting Diff_weight_mg to numeric
 Weight$Diff_weight_mg <- as.numeric((as.character(Weight$Diff_weight_mg)))
 
+glimpse(Reps)
+
+# converting ID to factor
+Reps$ID <- as.factor(Reps$ID)
+
+# converting Temperature to factor
+Reps$Temperature <- as.factor(Reps$Temperature)
+
+# converting Tank to factor
+Reps$Tank <- as.factor(Reps$Tank)
+
 # reorganiziing Nutrient factor levels
-Weight$Nutrient <- ordered(Weight$Nutrient, levels = c("Control", "Ammonium", "Nitrate"))
+Reps$Nutrient <- ordered(Reps$Nutrient, levels = c("Control", "Ammonium", "Nitrate"))
 
-# renaming the Corallivory column to Scarred
-colnames(Weight)[colnames(Weight)=="Corallivory"] <- "Scarred"
+glimpse(Reps)
 
-glimpse(Weight)
+# converting Nutrient to factor
+Reps$Nutrient <- as.factor(Reps$Nutrient)
 
 # check for NA values
 is.na(Weight$Diff_weight_mg) 
@@ -98,8 +111,16 @@ is.na(Weight$Diff_weight_mg) # no NA values
 # looking at SurfaceArea df
 glimpse(SurfaceArea)
 
+# converting ID to factor
+SurfaceArea$ID <- as.factor(SurfaceArea$ID)
+
 # merging Weight and SurfaceArea df's by ID
 Weight <- merge.data.frame(Weight, SurfaceArea, by = 'ID')
+
+# merging Weight and Reps df's by ID
+Weight <- merge.data.frame(Reps, Weight, by = 'ID')
+
+glimpse(Weight)
 
 # standardizing the difference in weight (mg) by surface area (cm^2)
 Weight$Stand_diff <- Weight$Diff_weight_mg / Weight$Surface_area_cm2
@@ -118,7 +139,7 @@ ggplot(Weight, aes(x = Tank, y = Stand_diff))+
   geom_boxplot()+
   ylab(expression(paste("Growth (mg ", cm^"-2 ", day^"-1", ")")))+
   theme_few() 
-# looks like there is an outlier from 5
+# outlier from tank 1
 
 # box plot of growth by colony
 ggplot(Weight, aes(x = Colony, y = Stand_diff))+
@@ -133,7 +154,7 @@ ggplot(Weight, aes(x = Treatment, y = Stand_diff))+
   ylab(expression(paste("Growth (mg ", cm^"-2 ", day^"-1", ")")))+
   theme_few() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-# outlier is 26, Ammonium, Scarred
+# outlier is in nitrate, 29, intact
 
 ##############################################################################################################################
 ##### PLOTTING MEAN +/- SE WITH OUTLIER
@@ -147,16 +168,18 @@ WeightSummary <- ddply(Weight, .(Nutrient, Temperature, Scarred), summarise,
 
 dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
 
-ggplot(WeightSummary, aes(x = Temperature, y = mean, fill=Scarred))+
+ggplot(WeightSummary, aes(x = Temperature, y = mean, colour = Scarred, fill = Scarred))+
   facet_wrap(~Nutrient)+
-  geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
-                width=0, position=position_dodge(width = 0.7))+
-  scale_shape_manual(values = c(21, 21))+
-  scale_fill_manual(values = c('black', 'white'))+
-  geom_point(aes(shape=Scarred), position = position_dodge(width = 0.7), size = 5)+
+  geom_bar(stat="identity", position="dodge") +
+  geom_errorbar(aes(ymin = mean - se, 
+                    ymax = mean + se), 
+                width=0, position=position_dodge(width = 0.9))+
+  geom_point(data = Weight, aes(x = Temperature, y = Stand_diff, colour = Scarred), shape = 21, alpha = 0.7,
+             position = position_jitterdodge(jitter.width = 0.3, jitter.height=0.2, dodge.width=0.9))+
+  scale_color_manual(values = c('black', 'black'), guide=FALSE)+
+  scale_fill_manual(values = c('gray73', 'white'), labels=c("Intact", "Wounded"))+
   xlab(expression("Temperature ("*degree*C* ")"))+
   ylab(expression(paste("Growth (mg ", cm^"-2 ", day^"-1", ")")))+
-  scale_y_continuous(limits = c(0, 2.5), breaks = seq(0, 2.5, 0.5))+
   theme_few(base_size = 12)+
   theme(axis.text.x=element_text(colour="black"))+
   theme(axis.text.y=element_text(colour="black"))
@@ -201,7 +224,7 @@ par(mfrow=c(1,2))
 hist(Weight$Stand_diff)
 qqnorm(Weight$Stand_diff)
 abline(0,1)
-shapiro.test(Weight$Stand_diff) # statistically normally distributed
+shapiro.test(Weight$Stand_diff) 
 # weight does not look normal - definitely an extreme outlier
 max(Weight$Stand_diff) # this is the outlier value
 # no coral grows 7 mg per cm^2 per day - this is computational error
@@ -212,9 +235,7 @@ par(mfrow=c(1,3))
 interaction.plot(Weight$Temperature, Weight$Nutrient, Weight$Stand_diff)
 interaction.plot(Weight$Temperature, Weight$Scarred, Weight$Stand_diff)
 interaction.plot(Weight$Scarred, Weight$Nutrient, Weight$Stand_diff)
-# doesn't really look like there's any interactions going on
 
-library(lme4)
 # full model with all random effects and the interaction between temperature and nutrient
 full.model <- lmer(Stand_diff ~ Temperature * Nutrient * Scarred + (1|Tank) + (1|Colony), data = Weight, REML = TRUE)
 tank.model <- lmer(Stand_diff ~ Temperature * Nutrient * Scarred + (1|Tank), data = Weight, REML = TRUE)
@@ -236,28 +257,17 @@ qqline(ranef(full.model)$Tank[,1])
 # the residuals look relatively normal
 
 # first need to determine random effect structure
-# determining if the random effect of tank and colony are significant in the model
-anova(tank.model, full.model) # looking at the random effect of colony
-# colony significant in the model (p = 0.5489)
-anova(colony.model, full.model) # looking at the random effect of tank
-# tank not significant in the model (p = 1)
 library(lmerTest)
-ranova(tank.model) # tank is not significant (p = 1)
-ranova(colony.model) # colony is significant (p = 0.5711)
 ranova(full.model) # looking at the LRT for the random effects
-# colony is not significant (p = 0.5711)
+# colony is not significant (p = 0.5772)
 # tank is not significant (p = 1) 
 
-# AIC values for all models
-AIC(tank.model, colony.model, full.model)
-# AIC values aren't really that different, simplest model is the colony model
+# corrected AIC values for all models
 library(MuMIn)
 AICc(tank.model, colony.model, full.model)
-# same pattern for corrected AIC values
 # enough evidence that tank can be dropped
 
 # resulting final model:
-# Healing Rate ~ Temperature + Nutrient + Temperature*Nutrient + (1|Colony)
 final.model <- lmer(Stand_diff ~ Nutrient * Temperature * Scarred + (1|Colony), data = Weight, REML = TRUE)
 # looking at residuals for normality and constant variance
 normality.plots(final.model) # residuals look fairly normally distributed
@@ -266,26 +276,13 @@ var.plots(final.model) # residuals look like they're fairly spread out about the
 
 # f-test for fixed effects
 anova(final.model, type=3, ddf = "Kenward-Roger")
-anova(final.model, type=3, dff = "Satterthwaite")
-# significant interaction
-
-# conditional R^2
-library(MuMIn)
-r.squaredGLMM(final.model)
-# R2m is the R^2 for fixed effects
-# R2c is the R^2 for random effects
-# here the random effects explain ~17% of the variation in healing rate
-
-# comparing this to the R^2 for the model with tank as random effect
-r.squaredGLMM(full.model)
-# when added as a random effect tank explains ~13% of the variance in healing rate
+# no significant main or interactive effects
 
 ##############################################################################################################################
 ##### DATA ANALYSIS: MIXED EFFECTS MODEL WITHOUT OUTLIER
 ##############################################################################################################################
 
 # need to remove the row with the outlier
-library(tidyverse)
 sort(Weight$Stand_diff)
 Weight.removed <- Weight %>% subset(Stand_diff < 6)
 sort(Weight.removed$Stand_diff) # outlier successfuly removed
@@ -321,8 +318,8 @@ par(mfrow=c(1,2))
 hist(Weight.removed$Stand_diff)
 qqnorm(Weight.removed$Stand_diff)
 abline(0,1)
-shapiro.test(Weight.removed$Stand_diff) # not statistically normally distributed
-# weight does look a lot more normal after removing the outlier0
+shapiro.test(Weight.removed$Stand_diff) 
+# weight does look a lot more normal after removing the outlier
 
 # interaction plot
 par(mfrow=c(1,3))
@@ -337,8 +334,6 @@ tank.model.removed <- lmer(Stand_diff ~ Temperature * Nutrient * Scarred + (1|Ta
 colony.model.removed <- lmer(Stand_diff ~ Temperature * Nutrient * Scarred + (1|Colony), data = Weight.removed, REML = TRUE)
 
 dotplot(ranef(full.model.removed, condVar = TRUE))
-# shows the variance of growth across random effects
-# doesn't look like there's an effect of colony
 
 # need to check assumptions for random effects:
 # 1) residuals are independently distributed
@@ -351,28 +346,15 @@ qqline(ranef(full.model.removed)$Tank[,1])
 # the residuals look relatively normal
 
 # first need to determine random effect structure
-# determining if the random effect of tank and colony are significant in the model
-anova(tank.model.removed, full.model.removed) # looking at the random effect of colony
-# colony significant in the model (p = 0.003964)
-anova(colony.model.removed, full.model.removed) # looking at the random effect of tank
-# tank not significant in the model (p = 1)
-ranova(tank.model.removed) # tank is not significant (p = 1)
-ranova(colony.model.removed) # colony is significant (p = 0.006469)
 ranova(full.model.removed) # looking at the LRT for the random effects
 # colony is significant (p = 0.006279)
 # tank is not significant (p = 0.8167) 
 
-# AIC values for all models
-AIC(tank.model.removed, colony.model.removed, full.model.removed)
-# simplest model is the model with only colony as random effect
-# dropping tank as random effect because not significant and does not improve model fit
-
-AICc(tank.model, colony.model, full.model)
-# similar pattern for corrected AIC values
+# corrected AIC values for all models
+AICc(tank.model.removed, colony.model.removed, full.model.removed)
 # enough evidence that tank can be dropped
 
 # resulting final model:
-# Healing Rate ~ Temperature * Nutrient * Scarred + (1|Colony)
 final.model.removed <- lmer(Stand_diff ~ Temperature * Nutrient * Scarred + (1|Colony), data = Weight.removed, REML = TRUE)
 # looking at residuals for normality and constant variance
 normality.plots(final.model.removed) # residuals look fairly normally distributed
@@ -381,18 +363,7 @@ var.plots(final.model.removed) # residuals look like they're fairly spread out a
 
 # f-test for fixed effects
 anova(final.model.removed, type=3, ddf = "Kenward-Roger")
-anova(final.model.removed, type=3, dff = "Satterthwaite")
-# significant interaction
-
-# conditional R^2
-r.squaredGLMM(final.model.removed)
-# R2m is the R^2 for fixed effects
-# R2c is the R^2 for random effects
-# here the random effects explain ~23% of the variation in growth rate
-
-# comparing this to the R^2 for the model with tank as random effect
-r.squaredGLMM(full.model.removed)
-# when added as a random effect tank explains ~1% of the variance in growth rate
+# no significant main or interactive effects
 
 ##############################################################################################################################
 ##### PLOTTING MEAN +/- SE WITHOUT OUTLIER
@@ -405,7 +376,9 @@ WeightSummaryRemoved <- ddply(Weight.removed, .(Nutrient, Temperature, Scarred),
                        'N'=length(Stand_diff))
 
 dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
+
 names(Weight.removed)
+
 growth <- ggplot(WeightSummaryRemoved, aes(x = Temperature, y = mean, colour = Scarred, fill = Scarred))+
   facet_wrap(~Nutrient)+
   geom_bar(stat="identity", position="dodge") +
@@ -426,38 +399,10 @@ growth <- ggplot(WeightSummaryRemoved, aes(x = Temperature, y = mean, colour = S
   theme(legend.title = element_blank())
 growth
 
+##############################################################################################################################
+##### MANUSCRIPT PLOT
+##############################################################################################################################
+
 ggsave("growth.png", growth, 
-       path = "~/Documents/Dropbox/1. Research/PhD/Coral_2016/R/Figures/",
+       path = "Output/",
        width = 6, height = 4, units = "in")
-
-##############################################################################################################################
-##### PLOTTING PERCENT CHANGE IN WEIGHT WITHOUT OUTLIER
-##############################################################################################################################
-
-# first need to calculate % change in weight:
-# (final - initial) / initial * 100%
-Weight.removed$PercChange <- ( (Weight.removed$Final_weight_g - Weight.removed$Initial_weight_g) / Weight.removed$Initial_weight_g ) * 100
-
-# summarizing data to plot
-WeightSummaryRemovedPercChange <- ddply(Weight.removed, .(Nutrient, Temperature, Scarred), summarise,
-                              'mean'=mean(PercChange, na.rm = TRUE),
-                              'se'=se(PercChange),
-                              'N'=length(PercChange))
-
-dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
-
-ggplot(WeightSummaryRemovedPercChange, aes(x = Temperature, y = mean, colour = Scarred, fill = Scarred))+
-  facet_wrap(~Nutrient)+
-  geom_bar(stat="identity", position="dodge") +
-  geom_errorbar(aes(ymin = mean - se, 
-                    ymax = mean + se), 
-                width=0, position=position_dodge(width = 0.9))+
-  scale_color_manual(values = c('black', 'black'), guide=FALSE)+
-  scale_fill_manual(values = c('gray33', 'gray73'))+
-  xlab(expression("Temperature ("*degree*C* ")"))+
-  ylab("Percent Change in Weight (%)")+
-  scale_y_continuous(limits = c(0, 2), breaks = seq(0, 2.5, 0.5))+
-  theme_few(base_size = 12)+
-  theme(axis.text.x=element_text(colour="black"))+
-  theme(axis.text.y=element_text(colour="black"))+
-  guides(fill = FALSE)

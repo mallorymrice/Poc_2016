@@ -51,41 +51,60 @@ var.plots <- function(x) {
 ##############################################################################################################################
 
 # opening up Healing csv file
-Healing <- read.csv(file="MMR_Healing.csv", encoding = 'UTF-8')
+Healing <- read.csv("Data/MMR_2016_Healing.csv", encoding = 'UTF-8')
+
+# opening Replicate Treatment csv file
+Reps <- read.csv("Data/MMR_2016_Replicate_treatment_assignments.csv", encoding = 'UTF-8', na.strings=c("", "NA"))
 
 ##############################################################################################################################
 ##### RESTRUCTURING DF
 ##############################################################################################################################
 
 glimpse(Healing)
+
+# convering ID to factor
+Healing$ID <- as.factor(Healing$ID)
+
+glimpse(Healing)
+
+glimpse(Reps)
+
+# convering ID to factor
+Reps$ID <- as.factor(Reps$ID)
+
 # converting Temperature to factor
-Healing$Temperature <- as.factor(Healing$Temperature)
+Reps$Temperature <- as.factor(Reps$Temperature)
 
 # converting Tank to factor
-Healing$Tank <- as.factor(Healing$Tank)
+Reps$Tank <- as.factor(Reps$Tank)
 
 # reorganizing Nutrient factor levels
-Healing$Nutrient <- ordered(Healing$Nutrient, levels = c("Control", "Ammonium", "Nitrate"))
+Reps$Nutrient <- ordered(Reps$Nutrient, levels = c("Control", "Ammonium", "Nitrate"))
+
+# merging data frames
+Healing <- merge.data.frame(Reps, Healing, by = "ID")
+
+glimpse(Healing)
 
 ##############################################################################################################################
 ##### PLOTTING HEALING RATE STANDARDIZED BY DAY (mm^2 day^-1) 
 ##############################################################################################################################
 
 # summarizing data to plot
-HealingSummary <- ddply(Healing, .(Nutrient, Temperature, Corallivory), summarise,
+HealingSummary <- ddply(Healing, .(Nutrient, Temperature, Scarred), summarise,
                         'mean'=mean(HealingRate),
                         'se'=se(HealingRate))
 
 dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
 
 # plotting Healing Rate by treatment
-ggplot(HealingSummary, aes(x = Temperature, y = mean, colour = Corallivory, fill = Corallivory))+
+healing <- ggplot(HealingSummary, aes(x = Temperature, y = mean, colour = Scarred, fill = Scarred))+
   facet_wrap(~Nutrient)+
   geom_bar(stat="identity", position="dodge") +
   geom_errorbar(aes(ymin = mean - se, 
                     ymax = mean + se), 
                 width=0, position=position_dodge(width = 0.9))+
-  geom_point(data = Healing, aes(x = Temperature, y = HealingRate, colour = Corallivory), shape = 21, alpha = 0.7,
+  geom_point(data = Healing, aes(x = Temperature, y = HealingRate, colour = Scarred), shape = 21, alpha = 0.7,
              position = position_jitterdodge(jitter.width = 0.3, jitter.height=0.2, dodge.width=0.9))+
   scale_color_manual(values = c('black'), guide=FALSE)+
   scale_fill_manual(values = c('gray73'), guide = FALSE)+
@@ -95,70 +114,7 @@ ggplot(HealingSummary, aes(x = Temperature, y = mean, colour = Corallivory, fill
   theme_few(base_size = 12)+
   theme(axis.text.x=element_text(colour="black"))+
   theme(axis.text.y=element_text(colour="black"))
-
-##############################################################################################################################
-##### INTERACTION PLOT OF HEALING RATE STANDARDIZED BY DAY (mm^2 day^-1) 
-##############################################################################################################################
-
-dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
-
-# plotting Healing Rate by treatment - BW plot
-ggplot(HealingSummary, aes(x = Temperature, y = mean, colour=Nutrient))+
-  geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
-                width=0, position=position_dodge(width = 0.7))+
-  geom_point(position = position_dodge(width = 0.7), size = 4)+
-  xlab(expression("Temperature ("*degree*C* ")"))+
-  ylab(bquote('Healing Rate ('*mm^2*' '*day^-1*')'))+
-  scale_y_continuous(limits = c(0, 2), breaks = seq(0,2,0.5))+
-  theme_few(base_size = 12)
-
-##############################################################################################################################
-##### PLOTTING HEALING PERCENT (%)
-##############################################################################################################################
-
-# summarizing data to plot
-PercentHealedSummary <- ddply(Healing, .(Nutrient, Temperature, Corallivory), summarise,
-                        'mean'=mean(PercentHealed),
-                        'se'=se(PercentHealed))
-dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
-
-# plotting Healing Rate by treatment - BW plot
-ggplot(PercentHealedSummary, aes(x = Temperature, y = mean, fill=Corallivory))+
-  facet_wrap(~Nutrient)+
-  geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
-                width=0, position=position_dodge(width = 0.7))+
-  scale_shape_manual(values = c(21))+
-  scale_fill_manual(values = c('white'))+
-  geom_point(aes(shape=Corallivory), position = position_dodge(width = 0.7), size = 4)+
-  xlab(expression("Temperature ("*degree*C* ")"))+
-  ylab("Percent Healed (%)")+
-  theme_few(base_size = 12)+
-  theme(legend.position="none")
-
-####################################################################################################
-##### PLOT OF DIFF IN SCAR AREA
-####################################################################################################
-
-Healing$Difference <- Healing$Initial_scar_area - Healing$Final_scar_area
-
-# summarizing data to plot
-DifferenceSummary <- ddply(Healing, .(Nutrient, Temperature, Corallivory), summarise,
-                              'mean'=mean(Difference),
-                              'se'=se(Difference))
-dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
-
-# plotting Healing Rate by treatment - BW plot
-ggplot(DifferenceSummary, aes(x = Temperature, y = mean, fill=Corallivory))+
-  facet_wrap(~Nutrient)+
-  geom_errorbar(aes(ymin = mean - se, ymax = mean + se),
-                width=0, position=position_dodge(width = 0.7))+
-  scale_shape_manual(values = c(21))+
-  scale_fill_manual(values = c('white'))+
-  geom_point(aes(shape=Corallivory), position = position_dodge(width = 0.7), size = 4)+
-  xlab(expression("Temperature ("*degree*C* ")"))+
-  ylab("Difference in scar area (mm^2)")+
-  theme_few(base_size = 12)+
-  theme(legend.position="none")
+healing
 
 ####################################################################################################
 ##### DATA ANALYSIS: MIXED EFFECTS MODEL
@@ -220,30 +176,17 @@ qqline(ranef(full.model)$Tank[,1])
 # the residuals look relatively normal
 
 # first need to determine random effect structure
-# determining if the random effect of tank and colony are significant in the model
-anova(tank.model, full.model) # looking at the random effect of colony
-# colony significant in the model (p = 0.02364)
-anova(colony.model, full.model) # looking at hte random effect of tank
-# tank not significant in the model (p = 0.5807)
 library(lmerTest)
-ranova(tank.model) # tank is not significant (p = 0.1835)
-ranova(colony.model) # colony is significant (p = 0.03647)
 ranova(full.model) # looking at the LRT for the random effects
-# colony is significant (p = 0.02159)
-# tank is not significant (p = 0.10213) but this p-value is a little iffy to me
+# colony is significant (p = 0.01961)
+# tank is not significant (p = 0.09709)
 
-# AIC values for all models
-AIC(tank.model, colony.model, full.model)
-# AIC value for tank model is ~3 values higher than that of colony model
-# AIC value for full model (tank and colony as random effects) is similar to that of the colony model
-# AIC values suggest that tank is not important to include
+# corrected AIC values for all models
 library(MuMIn)
 AICc(tank.model, colony.model, full.model)
-# same pattern for corrected AIC values
 # enough evidence that tank can be dropped
 
 # resulting final model:
-# Healing Rate ~ Temperature + Nutrient + Temperature*Nutrient + (1|Colony)
 final.model <- lmer(HealingRate ~ Nutrient * Temperature + (1|Colony), data = Healing, REML = TRUE)
 # looking at residuals for normality and constant variance
 normality.plots(final.model) # residuals look fairly normally distributed
@@ -252,33 +195,16 @@ var.plots(final.model) # residuals look like they're fairly spread out about the
 
 # f-test for fixed effects
 anova(final.model, type=3, ddf = "Kenward-Roger")
-anova(final.model, type=3, dff = "Satterthwaite")
 # significant interaction
 
-# loading lsmeans package to do post-hoc tests
-library(lsmeans)
-# determing what treatments are driving the significant interaction
-LSMeans <- lsmeans(final.model, ~ Nutrient * Temperature, options = list(estName = "HealingRate"))
-LSMeans
-lsmeansLT(final.model)
-difflsmeans(final.model)
-pairs(LSMeans)
-org.sum <- summary(LSMeans, infer = c(TRUE,TRUE), level = .95)
-org.sum
+# post-hoc tests
+library(emmeans)
+emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey") # post-hoc results for Temperature treatment
 
-# conditional R^2
-library(MuMIn)
-r.squaredGLMM(final.model)
-# R2m is the R^2 for fixed effects
-# R2c is the R^2 for random effects
-# here the random effects explain ~17% of the variation in healing rate
+##############################################################################################################################
+##### MANUSCRIPT PLOT
+##############################################################################################################################
 
-# comparing this to the R^2 for the model with tank as random effect
-r.squaredGLMM(full.model)
-# when added as a random effect tank explains ~13% of the variance in healing rate
-
-####################################################################################################
-##### DATA ANALYSIS: SPLIT PLOT DESIGN
-####################################################################################################
-
-split.plot <- lmer(HealingRate ~ Nutrient * Temperature + (1|Colony) + (1|Tank/Corallivory), data = Healing, REML = TRUE)
+ggsave("healing.png", healing, 
+       path = "Output/",
+       width = 3, height = 3, units = "in")
