@@ -1,0 +1,63 @@
+,SampleID,distwu,distun,distbc,distbj,tank,nutrient,temp,corallivory,colony,interaction,stress
+7,m.ch.11,0.269572548,0.687571327,0.315571299,0.861913487,D,All Ambient,All Ambient,All No Scar,C1,Control,none
+12,m.ch.14,0.262339887,0.705687442,0.315842629,0.875006749,D,All Ambient,All Ambient,All No Scar,C4,Control,none
+13,m.ch.15,0.269917518,0.699569836,0.31549593,0.885065495,D,All Ambient,All Ambient,All No Scar,C5,Control,none
+14,m.ch.17,0.261089935,0.676635567,0.314712089,0.862167907,L,All Ambient,All Ambient,All No Scar,C7,Control,none
+15,m.ch.18,0.272483557,0.741109175,0.316324992,0.878947459,L,All Ambient,All Ambient,All No Scar,C8,Control,none
+21,m.ch.31,0.250130137,0.66253849,0.317998191,0.8525065,F,All Ambient,All High Temp,All No Scar,C1,High T,single
+22,m.ch.34,0.49933589,0.704929757,0.656813386,0.831966223,F,All Ambient,All High Temp,All No Scar,C4,High T,single
+23,m.ch.37,0.468374959,0.674334328,0.599894483,0.871769499,G,All Ambient,All High Temp,All No Scar,C7,High T,single
+24,m.ch.38,0.563215605,0.740393157,0.792689177,0.866557181,G,All Ambient,All High Temp,All No Scar,C8,High T,single
+16,m.ch.24,0.278556471,0.681640472,0.366641544,0.830376594,F,All Ambient,All High Temp,All Scarred,C4,"High T, Scarred",double
+17,m.ch.25,0.249711275,0.632752019,0.315676816,0.85807969,F,All Ambient,All High Temp,All Scarred,C5,"High T, Scarred",double
+18,m.ch.27,0.333429262,0.646073829,0.466701839,0.833698536,G,All Ambient,All High Temp,All Scarred,C7,"High T, Scarred",double
+19,m.ch.28,0.293106516,0.656188355,0.405517033,0.823424551,G,All Ambient,All High Temp,All Scarred,C8,"High T, Scarred",double
+20,m.ch.29,0.280496714,0.679507309,0.34972867,0.851518141,G,All Ambient,All High Temp,All Scarred,C9,"High T, Scarred",double
+57,m.ch.91,0.262912363,0.725729883,0.340156768,0.881381002,E,All NH4+,All Ambient,All No Scar,C1,NH4+,single
+58,m.ch.94,0.265113754,0.688576211,0.311832982,0.866787607,E,All NH4+,All Ambient,All No Scar,C4,NH4+,single
+59,m.ch.95,0.388001852,0.740576199,0.437669581,0.869586691,E,All NH4+,All Ambient,All No Scar,C5,NH4+,single
+60,m.ch.97,0.257402256,0.698377486,0.314124209,0.896659521,K,All NH4+,All Ambient,All No Scar,C7,NH4+,single
+61,m.ch.98,0.299552607,0.72560582,0.394603557,0.885747674,K,All NH4+,All Ambient,All No Scar,C8,NH4+,single
+62,m.ch.99,0.262432063,0.682487239,0.340835092,0.878146331,K,All NH4+,All Ambient,All No Scar,C9,NH4+,single
+8,m.ch.114,0.28385465,0.772683106,0.31873681,0.901200711,C,All NH4+,All High Temp,All No Scar,C4,"NH4+, High T",double
+9,m.ch.115,0.449768728,0.700506025,0.536523967,0.860518237,C,All NH4+,All High Temp,All No Scar,C5,"NH4+, High T",double
+10,m.ch.118,0.687476216,0.65992093,0.888151945,0.830207709,J,All NH4+,All High Temp,All No Scar,C8,"NH4+, High T",double
+11,m.ch.119,0.261476627,0.686579175,0.321600844,0.87322754,J,All NH4+,All High Temp,All No Scar,C9,"NH4+, High T",double
+2,m.ch.101,0.446236467,0.670027796,0.582212843,0.873076185,C,All NH4+,All High Temp,All Scarred,C1,"NH4+, High T, Scarred",triple
+3,m.ch.104,0.271391628,0.667987886,0.321058185,0.898720583,C,All NH4+,All High Temp,All Scarred,C4,"NH4+, High T, Scarred",triple
+4,m.ch.105,0.29543202,0.67439251,0.389026229,0.806951003,C,All NH4+,All High Temp,All Scarred,C5,"NH4+, High T, Scarred",triple
+5,m.ch.108,0.696304487,0.768098163,0.948100693,0.887942579,J,All NH4+,All High Temp,All Scarred,C8,"NH4+, High T, Scarred",triple
+6,m.ch.109,0.267093571,0.708287429,0.347347,0.856812393,J,All NH4+,All High Temp,All Scarred,C9,"NH4+, High T, Scarred",triple
+50,m.ch.81,0.254842036,0.682718499,0.311667169,0.865290081,E,All NH4+,All Ambient,All Scarred,C1,"NH4+, Scarred",double
+51,m.ch.84,0.274401016,0.703852784,0.371525475,0.884744796,E,All NH4+,All Ambient,All Scarred,C4,"NH4+, Scarred",double
+52,m.ch.85,0.283517622,0.68980914,0.319520651,0.89254828,E,All NH4+,All Ambient,All Scarred,C5,"NH4+, Scarred",double
+53,m.ch.87,0.270722837,0.70770831,0.319731685,0.898012654,K,All NH4+,All Ambient,All Scarred,C7,"NH4+, Scarred",double
+54,m.ch.88,0.28323537,0.638684032,0.355728068,0.847504795,K,All NH4+,All Ambient,All Scarred,C8,"NH4+, Scarred",double
+55,m.ch.89,0.297429263,0.642545546,0.426786253,0.832878604,K,All NH4+,All Ambient,All Scarred,C9,"NH4+, Scarred",double
+33,m.ch.51,0.282473051,0.752590621,0.322233946,0.910723639,A,All NO3-,All Ambient,All No Scar,C1,NO3-,single
+34,m.ch.55,0.308749071,0.674889239,0.397995176,0.88340694,A,All NO3-,All Ambient,All No Scar,C5,NO3-,single
+35,m.ch.57,0.520741277,0.703780658,0.69172445,0.86585176,H,All NO3-,All Ambient,All No Scar,C7,NO3-,single
+36,m.ch.58,0.334494043,0.737782069,0.452155562,0.872292087,H,All NO3-,All Ambient,All No Scar,C8,NO3-,single
+37,m.ch.59,0.2895053,0.830890975,0.321419958,0.92134843,H,All NO3-,All Ambient,All No Scar,C9,NO3-,single
+44,m.ch.74,0.363991874,0.711052735,0.518435333,0.84739903,B,All NO3-,All High Temp,All No Scar,C4,"NO3-, High T",double
+45,m.ch.75,0.252737521,0.653296651,0.311893277,0.858261923,B,All NO3-,All High Temp,All No Scar,C5,"NO3-, High T",double
+46,m.ch.77,0.393716975,0.622998102,0.54742237,0.84878596,I,All NO3-,All High Temp,All No Scar,C7,"NO3-, High T",double
+47,m.ch.78,0.246185464,0.639531162,0.311682243,0.8367916,I,All NO3-,All High Temp,All No Scar,C8,"NO3-, High T",double
+48,m.ch.79,0.434029539,0.689404753,0.555652698,0.860816288,I,All NO3-,All High Temp,All No Scar,C9,"NO3-, High T",double
+38,m.ch.61,0.269793224,0.671913699,0.373123304,0.843482807,B,All NO3-,All High Temp,All Scarred,C1,"NO3-, High T, Scarred",triple
+39,m.ch.64,0.262183907,0.702419256,0.321208924,0.887268432,B,All NO3-,All High Temp,All Scarred,C4,"NO3-, High T, Scarred",triple
+40,m.ch.65,0.311306158,0.672958215,0.439433223,0.848370178,B,All NO3-,All High Temp,All Scarred,C5,"NO3-, High T, Scarred",triple
+41,m.ch.67,0.272708,0.772295771,0.316762134,0.913014127,I,All NO3-,All High Temp,All Scarred,C7,"NO3-, High T, Scarred",triple
+42,m.ch.69,0.512554408,0.687334009,0.707386192,0.833383309,I,All NO3-,All High Temp,All Scarred,C9,"NO3-, High T, Scarred",triple
+26,m.ch.41,0.263340858,0.710709408,0.327464576,0.853337172,A,All NO3-,All Ambient,All Scarred,C1,"NO3-, Scarred",double
+27,m.ch.44,0.305966923,0.718835621,0.419641242,0.863936686,A,All NO3-,All Ambient,All Scarred,C4,"NO3-, Scarred",double
+28,m.ch.45,0.289416111,0.8382141,0.321826952,0.922953022,A,All NO3-,All Ambient,All Scarred,C5,"NO3-, Scarred",double
+29,m.ch.47,0.262950317,0.696764301,0.329710582,0.886483035,H,All NO3-,All Ambient,All Scarred,C7,"NO3-, Scarred",double
+30,m.ch.48,0.270442509,0.726482564,0.324811577,0.938904853,H,All NO3-,All Ambient,All Scarred,C8,"NO3-, Scarred",double
+31,m.ch.49,0.608558546,0.750258085,0.833780525,0.879230897,H,All NO3-,All Ambient,All Scarred,C9,"NO3-, Scarred",double
+1,m.ch.1,0.557557184,0.707816139,0.744709074,0.876212261,D,All Ambient,All Ambient,All Scarred,C1,Scarred,single
+25,m.ch.4,0.466922451,0.671967737,0.626529997,0.833301094,D,All Ambient,All Ambient,All Scarred,C4,Scarred,single
+32,m.ch.5,0.287585999,0.648671985,0.383087127,0.826540947,D,All Ambient,All Ambient,All Scarred,C5,Scarred,single
+43,m.ch.7,0.26092256,0.671710295,0.32158577,0.86474967,L,All Ambient,All Ambient,All Scarred,C7,Scarred,single
+49,m.ch.8,0.411210112,0.670882889,0.563189629,0.836049538,L,All Ambient,All Ambient,All Scarred,C8,Scarred,single
+56,m.ch.9,0.410846026,0.617268579,0.515345191,0.814948564,L,All Ambient,All Ambient,All Scarred,C9,Scarred,single
