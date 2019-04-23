@@ -52,8 +52,8 @@ estimate_pd <- function(phylo){
   return(pdtable)
 }
 
-# Load phyloseq object from import qiime script
-qd <- load(file = "~/qd_rarefied.RData")
+# load the rarefied OTU table with mapping file with physiological data
+qd <- load("~/data/RLM_2016_phyloseq_object.RData")
 
 ##
 # Initialize matrices to store richness and evenness estimates
