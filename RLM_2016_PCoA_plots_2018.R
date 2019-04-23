@@ -6,7 +6,11 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
 BiocManager::install("phyloseq", version = "3.8")
 
-load(file = "qd.RData") # load the .RData phyloseq object, named 'qd'
+# load the rarefied OTU table with mapping file with physiological data
+qd <- load("~/data/RLM_2016_phyloseq_object.RData")
+
+# Subset phyloseq object to only include samples with a healing rate.
+qd <- prune_samples(sample_data(qd)$healing !="NA", qd)
 
 # calculate distances from qd object
 qd_un <- phyloseq::distance(qd, method = "unifrac")
