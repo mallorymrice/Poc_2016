@@ -67,8 +67,8 @@ pairwise.adonis.dm <- function(x,factors,stratum=NULL,p.adjust.m="bonferroni",pe
 
 ## Data Analysis----------------------------
 
-# First import qd object, this is the phyloseq object from the import_qiime_to_phyloseq.R
-import(qd, file = "~/qd.RData")
+# load the rarefied OTU table with mapping file with physiological data
+qd <- load("~/data/RLM_2016_phyloseq_object.RData")
 
 # Calculate all four distance matrices: weighted unifrac, unweighted unifrac, bray curtis, binary jaccard
 qd_wu <- phyloseq::distance(qd, method = "wunifrac")
