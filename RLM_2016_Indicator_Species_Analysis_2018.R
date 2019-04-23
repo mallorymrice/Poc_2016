@@ -17,10 +17,8 @@ library("ggnetwork")
 library("ape")
 
 
-# load the rarefied OTU table and mapping file with physiological data
-mapfile = "/Users/Becca/Dropbox/Microbiome_analysis/mal/physmap.txt"
-map = import_qiime_sample_data(mapfile)
-sample_data(qd) <- map
+# load the rarefied OTU table with mapping file with physiological data
+qd <- load("~/data/RLM_2016_phyloseq_object.RData")
 
 # Subset phyloseq object to only include samples with a healing rate.
 qd <- prune_samples(sample_data(qd)$healing !="NA", qd)
