@@ -70,6 +70,12 @@ pairwise.adonis.dm <- function(x,factors,stratum=NULL,p.adjust.m="bonferroni",pe
 # load the rarefied OTU table with mapping file with physiological data
 qd <- load("~/data/RLM_2016_phyloseq_object.RData")
 
+# Log-transform OTU-table
+otus_log <- as(otu_table(qd), "matrix")
+otus_log <- decostand(otus_log, method = "log")
+OTU_log <- otu_table(otus_log, taxa_are_rows = TRUE)
+otu_table(qd) <- OTU_log
+
 # Calculate all four distance matrices: weighted unifrac, unweighted unifrac, bray curtis, binary jaccard
 qd_wu <- phyloseq::distance(qd, method = "wunifrac")
 qd_un <- phyloseq::distance(qd, method = "unifrac")
