@@ -10,7 +10,7 @@ This material is based upon work supported by the U.S. National Science Foundati
 ### Folders:
 
 **Data**\
-All data files used in this analysis\
+All data files used in this analysis
 
 **Output**\
 All figures produced in paper
