@@ -50,7 +50,7 @@ var.plots <- function(x) {
 ##### OPENING DF's
 ##############################################################################################################################
 
-# opening up Healing csv file
+# opening up Healing csv files
 Healing <- read.csv("Data/MMR_2016_Healing.csv", encoding = 'UTF-8')
 
 # opening Replicate Treatment csv file
@@ -61,6 +61,13 @@ Reps <- read.csv("Data/MMR_2016_Replicate_treatment_assignments.csv", encoding =
 ##############################################################################################################################
 
 glimpse(Healing)
+
+# calculating healing rate
+# need to substract final scar area from initial scar area
+# and then divide by the time period corals were allowed to heal (24 days)
+# healing rate: mm^2 day^-1
+Healing$HealingRate <- ( Healing$Initial_scar_area - Healing$Final_scar_area ) / 24
+sort(Healing$HealingRate)
 
 # convering ID to factor
 Healing$ID <- as.factor(Healing$ID)
@@ -178,8 +185,8 @@ qqline(ranef(full.model)$Tank[,1])
 # first need to determine random effect structure
 library(lmerTest)
 ranova(full.model) # looking at the LRT for the random effects
-# colony is significant (p = 0.01961)
-# tank is not significant (p = 0.09709)
+# colony is significant (p = 0.00391)
+# tank is not significant (p = 0.15168)
 
 # corrected AIC values for all models
 library(MuMIn)
@@ -189,8 +196,8 @@ AICc(tank.model, colony.model, full.model)
 # resulting final model:
 final.model <- lmer(HealingRate ~ Nutrient * Temperature + (1|Colony), data = Healing, REML = TRUE)
 # looking at residuals for normality and constant variance
-normality.plots(final.model) # residuals look fairly normally distributed
-var.plots(final.model) # residuals look like they're fairly spread out about the line
+normality.plots(full.model) # residuals look fairly normally distributed
+var.plots(full.model) # residuals look like they're fairly spread out about the line
 # assumptions met
 
 # f-test for fixed effects
@@ -205,7 +212,7 @@ emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey")
 ##### MANUSCRIPT PLOT
 ##############################################################################################################################
 
-ggsave("healing.png", healing, 
+ggsave("healing.pdf", healing, 
        path = "Output/",
        width = 3, height = 3, units = "in")
 
@@ -214,6 +221,6 @@ ggsave("healing.png", healing,
 ##############################################################################################################################
 
 HealingSummary
-(0.7523264 - 1.6941007) / 0.7523264 # 26 vs. 29 for ambient
-(0.752326 - 1.9079793) / 0.7523264 # 29 control vs. 29 ammonium
-(0.752326 - 1.4873854) / 0.7523264 # 29 control vs. 29 nitrate
+((1.6723313 - 0.5654271) / 1.6723313 ) * 100 # 26 vs. 29 for ambient # 66% decrease
+((1.5448958 - 0.5654271) / 1.5448958 ) * 100 # 29 control vs. 29 ammonium
+((1.5133920 - 0.5654271) / 1.5133920 ) * 100 # 29 control vs. 29 nitrate

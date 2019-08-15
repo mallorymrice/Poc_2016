@@ -396,13 +396,62 @@ growth <- ggplot(WeightSummaryRemoved, aes(x = Temperature, y = mean, colour = S
   theme(axis.text.x=element_text(colour="black"))+
   theme(axis.text.y=element_text(colour="black"))+
   theme(legend.position = c(0.1, 0.89))+
-  theme(legend.title = element_blank())
+  theme(legend.title = element_blank())+
+  theme(legend.justification=c(0,0), legend.position=c(.01,.78))
 growth
 
 ##############################################################################################################################
 ##### MANUSCRIPT PLOT
 ##############################################################################################################################
 
-ggsave("growth.png", growth, 
+ggsave("growth.pdf", growth, 
        path = "Output/",
        width = 6, height = 4, units = "in")
+
+##############################################################################################################################
+##### PLOTTING INITIAL NUBBIN WEIGHT BY TREATMENT
+##############################################################################################################################
+
+# summarizing data to plot
+summary <- ddply(Weight, .(Treatment), summarise,
+                 'mean'=mean(Initial_weight_g, na.rm = TRUE),
+                 'se'=se(Initial_weight_g))
+
+dodge<-position_dodge(width=0.6) # this offsets the points so they don't overlap
+
+ggplot(summary, aes(x = Treatment, y = mean))+
+  geom_bar(stat="identity", position="dodge") +
+  geom_errorbar(aes(ymin = mean - se, 
+                    ymax = mean + se), 
+                width=0, position=position_dodge(width = 0.9))+
+  ylab("Initial nubbin weight (g)")+
+  theme_few(base_size = 12)+
+  theme(axis.text.x=element_text(colour="black"))+
+  theme(axis.text.y=element_text(colour="black"))
+
+####################################################################################################
+##### DATA ANALYSIS: ONE-WAY ANOVA
+####################################################################################################
+
+summary(Weight$Initial_weight_g)
+se(Weight$Initial_weight_g)
+
+par(mfrow=c(1,2))
+hist(Weight$Initial_weight_g)
+qqnorm(Weight$Initial_weight_g)
+abline(0,1)
+shapiro.test(Weight$Initial_weight_g) # statistically not normally distributed
+leveneTest(Weight$Initial_weight_g ~ Weight$Treatment) # equal variance
+# using a nonparametric one-way ANOVA
+
+# boxplots
+ggplot(Weight, aes(x = Treatment, y = Initial_weight_g))+
+  geom_boxplot()+
+  ylab("Initial nubbin height (cm)")+
+  theme_few(base_size = 12)+
+  theme(axis.text.x=element_text(colour="black"))+
+  theme(axis.text.y=element_text(colour="black"))
+
+# Kruskal-Wallis test
+kruskal.test(Initial_weight_g ~ Treatment, data = Weight)
+# no differences in initial nubbin height across treatments

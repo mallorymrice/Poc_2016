@@ -170,7 +170,9 @@ zoox <- ggplot(Summary, aes(x = Temperature, y = mean, colour = Scarred, fill = 
   ylab(expression(italic(Symbiodinium)~"density"~{"(cells x 10"}^5*~{cm}^-2*")"~""))+
   theme_few(base_size = 12)+
   theme(axis.text.x=element_text(colour="black"))+
-  theme(axis.text.y=element_text(colour="black"))
+  theme(axis.text.y=element_text(colour="black"))+
+  theme(legend.title=element_blank())+
+  theme(legend.justification=c(0,0), legend.position=c(.12,.75))
 zoox
 
 ##############################################################################################################################
@@ -178,10 +180,12 @@ zoox
 ##############################################################################################################################
 
 # looking at distribution of zoox density
+par(mfrow=c(1,2))
 hist(merge$zoox.density)
 qqnorm(merge$zoox.density)
 qqline(merge$zoox.density)
 shapiro.test(merge$zoox.density) # data not normally distributed
+par(mfrow=c(1,1))
 boxplot(merge$zoox.density ~ merge$Treatment)
 
 glimpse(merge)
@@ -241,7 +245,7 @@ emmeans(final.model, list(pairwise ~ Temperature * Nutrient), adjust = "tukey")
 ##### MANUSCRIPT PLOT
 ##############################################################################################################################
 
-ggsave("zoox.png", zoox, 
+ggsave("zoox.pdf", zoox, 
        path = "Output/",
        width = 6, height = 4, units = "in")
 
@@ -253,15 +257,15 @@ ddply(merge, .(Temperature), summarise,
                  'mean'=mean(zoox.density2, na.rm = TRUE),
                  'se'=se(zoox.density2),
                  'N'=length(zoox.density2))
-(4.624448 - 3.810846) / 3.810846
+((4.624448 - 3.810846) / 3.810846 ) * 100 # 26 vs. 29 for ambient # 21% increase
 
 ddply(merge, .(Nutrient), summarise,
       'mean'=mean(zoox.density2, na.rm = TRUE),
       'se'=se(zoox.density2),
       'N'=length(zoox.density2))
-(4.815775 - 3.691771) / 3.691771 # ammonium vs. control
-(4.165281 - 3.691771) / 3.691771 # nitrate vs. control
-(4.815775 - 4.165281) / 4.815775 # ammonium vs. nitrate
+((4.815775 - 3.691771) / 3.691771 ) * 100 # ammonium vs. control # 30% increase
+((4.165281 - 3.691771) / 3.691771 ) * 100 # nitrate vs. control # 12% increase
+((4.815775 - 4.165281) / 4.815775 ) * 100 # ammonium vs. nitrate # 14% increase
 
 ddply(merge, .(Scarred), summarise,
       'mean'=mean(zoox.density2, na.rm = TRUE),

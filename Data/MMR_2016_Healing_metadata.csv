@@ -1,5 +1,3 @@
 ID,Unique coral ID
 Initial_scar_area,Initial area of simulated corallivory scar (mm^2)
 Final_scar_area,Final area of simulated corallivory scar (mm^2)
-PercentHealed,Percent of the wound that healed
-HealingRate,Wound healing rate (mm^2 day^-1)
